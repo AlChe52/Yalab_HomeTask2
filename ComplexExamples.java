@@ -124,15 +124,24 @@ public class ComplexExamples {
                 Key: Jack
                 Value:1
          */
-        Map<String, Long> countUnicData = Arrays.stream(RAW_DATA)
-                .distinct()
-                .collect(Collectors.groupingBy(Person::getName, Collectors.counting()));
 
-        for (Map.Entry<String,Long> entry : countUnicData.entrySet()) {
-            System.out.println("Key: "+entry.getKey());
-            System.out.println("Value: "+entry.getValue());
-        }
+            //  RAW_DATA = null;  // проверка eсли будет ли массив null
 
+           if (RAW_DATA !=null) {
+
+
+               Map<String, Long> countUnicData = Arrays.asList(RAW_DATA).stream()
+                       .filter(Objects::nonNull)
+                       .distinct()
+                       .sorted(Comparator.comparing(Person::getId))
+                       .collect(Collectors.groupingBy(Person::getName, Collectors.counting()));
+
+               for (Map.Entry<String, Long> entry : countUnicData.entrySet()) {
+                   System.out.println("Key: " + entry.getKey());
+                   System.out.println("Value: " + entry.getValue());
+               }
+           }
+           else System.out.println("This array is null");
         /*
         Task2
 
@@ -143,18 +152,16 @@ public class ComplexExamples {
         System.out.println("Task 2");
         System.out.println("=========================================");
          int [] array = {3,4,2,7};
-         boolean finish = false;
-         for (int i = 0; i < array.length && !finish; i++) {
-            for (int j = 0; j < array.length; j++) {
-                if (j != i && (array[i] + array[j]) == 10) {
-                    System.out.println("Печатаем первую пару цифр сумма которых равна 10");
-                    System.out.println("["+array[i] +", " +array[j]+"]");
-                    finish = true;
-                    break;
-                }
+         int sum = 10;
+         Map <Integer, Integer> map = new HashMap<>();
 
-            }
-        }
+         for (int i =0; i< array.length; i++) {
+             if (map.containsKey(sum-array[i])) {
+                 System.out.println("["+array[map.get(sum-array[i])]+","+array[i]+"]");
+                 break;
+                }
+             map.put(array[i],i );
+         }
 
         System.out.println();
         System.out.println("Task 3");
@@ -182,27 +189,17 @@ public class ComplexExamples {
 
     }
     public static boolean fuzzySearch (String input, String output) {
-       List<Integer> check = new ArrayList<>();
-
-             for (int i=0; i <=input.length()-1; i++) {
-               for (int j = 0; j <= output.length()-1; j++) {
-                if ((input.substring(i, i + 1).equals(output.substring(j, j + 1))) && (checkNumber (check, j))  ) {
-                      check.add(j);
-                     break;
-                }
-            }
-
+        int index = -1;
+        for (int i = 0; i < input.length(); i++) {
+            index = output.indexOf(input.substring(i, i + 1), index+1);
+            if (index == -1) return false;
         }
-             if (check.size() !=input.length() ) return false;
         return true;
-    }
-      static boolean checkNumber (List <Integer> list, int n) {
-        if (list.size()==0) return true;
-            if (list.get(list.size()-1) < n) return true;
-          return false;
-
-       }
 
     }
+}
+
+
+
 
 
